@@ -1,0 +1,72 @@
+# STEP 1: Import required libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# STEP 2: Load dataset (uploaded in Colab)
+df = pd.read_csv("netflix_titles.csv")
+
+# STEP 3: Basic overview
+print("First 5 rows:")
+display(df.head())
+
+print("\nDataset shape:", df.shape)
+print("\nDataset info:")
+df.info()
+
+# STEP 4: Missing values check
+print("\nMissing values per column:")
+display(df.isnull().sum())
+
+# STEP 5: Distribution of numerical feature (Release Year)
+plt.figure()
+df['release_year'].hist(bins=20)
+plt.title("Distribution of Release Year")
+plt.xlabel("Release Year")
+plt.ylabel("Count")
+plt.show()
+
+# STEP 6: Categorical analysis (Type: Movie / TV Show)
+plt.figure()
+sns.countplot(x='type', data=df)
+plt.title("Count of Movies vs TV Shows")
+plt.show()
+
+# STEP 7: Categorical analysis (Top 10 Countries)
+plt.figure()
+df['country'].dropna().value_counts().head(10).plot(kind='bar')
+plt.title("Top 10 Content Producing Countries")
+plt.xlabel("Country")
+plt.ylabel("Count")
+plt.show()
+
+# STEP 8: Box plot to detect outliers (Release Year)
+plt.figure()
+sns.boxplot(x=df['release_year'])
+plt.title("Box Plot of Release Year")
+plt.show()
+
+# STEP 9: Convert duration to numeric safely
+df['duration_num'] = df['duration'].str.extract('(\d+)')
+df['duration_num'] = pd.to_numeric(df['duration_num'], errors='coerce')
+
+# STEP 10: Correlation heatmap
+plt.figure(figsize=(6,4))
+sns.heatmap(
+    df[['release_year', 'duration_num']].corr(),
+    annot=True,
+    cmap="coolwarm"
+)
+plt.title("Correlation Heatmap")
+plt.show()
+
+# STEP 11: Final insights
+print("""
+INSIGHTS:
+1. Netflix content increased significantly after 2010.
+2. Movies are more common than TV Shows.
+3. United States produces the highest amount of content.
+4. Most content duration lies within a normal range.
+5. There is a weak correlation between release year and duration.
+""")
